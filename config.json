@@ -1,0 +1,67 @@
+{
+	"name": "Right-to-Left Module",
+
+    "namespace": "Vanderbilt\\RightToLeftExternalModule",
+
+    "description": "Module to help conform REDCap layout to a Right-to-Left language. Has options for applying layout changes to the Event Grid, Data Entry Form, Surveys, and Record Status Dashboard. Also contains options to have 12-digit numeric validation for a phone number instead of the standard 9-digit.",
+
+    "authors": [
+      {
+        "name": "Ryan Moore",
+        "email": "james.r.moore@vanderbilt.edu"
+      }
+    ],
+
+	"permissions": [
+		"hook_every_page_top",
+        "hook_data_entry_form",
+        "hook_survey_page",
+		"page_layout"
+	],
+	"global-settings": [],
+
+	"project-settings": [
+      {
+		"key": "eventgrid",
+		"name": "Apply right-to-left formatting to the Project Event Grid",
+		"required": true,
+		"type": "checkbox"
+      },
+      {
+        "key": "dataform",
+        "name": "Apply right-to-left formatting to the Data Entry Form",
+        "required": true,
+        "type": "checkbox"
+      },
+      {
+        "key": "surveyform",
+        "name": "Apply right-to-left formatting to the Surveys",
+        "required": true,
+        "type": "checkbox"
+      },
+      {
+        "key": "textfields",
+        "name": "Apply right-to-left formatting to text fields",
+        "required": true,
+        "type": "checkbox"
+      },
+      {
+        "key": "formlayout",
+        "name": "Apply right-to-left to form layout",
+        "required": true,
+        "type": "checkbox"
+      },
+      {
+        "key": "phonefield",
+        "name": "Phone field annotation for 12-digit phone numbers",
+        "required": true,
+        "type": "textbox"
+      },
+      {
+        "key": "countrycode",
+        "name": "Country code for phone fields (leave blank for general phone number checks)",
+        "required": true,
+        "type": "textbox"
+      }
+	]
+}
