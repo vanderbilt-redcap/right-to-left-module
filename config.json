@@ -25,43 +25,36 @@
       {
 		"key": "eventgrid",
 		"name": "Apply right-to-left formatting to the Project Event Grid",
-		"required": true,
 		"type": "checkbox"
       },
       {
         "key": "dataform",
         "name": "Apply right-to-left formatting to the Data Entry Form",
-        "required": true,
         "type": "checkbox"
       },
       {
         "key": "surveyform",
         "name": "Apply right-to-left formatting to the Surveys",
-        "required": true,
         "type": "checkbox"
       },
       {
         "key": "textfields",
         "name": "Apply right-to-left formatting to text fields",
-        "required": true,
         "type": "checkbox"
       },
       {
         "key": "formlayout",
         "name": "Apply right-to-left to form layout",
-        "required": true,
         "type": "checkbox"
       },
       {
         "key": "phonefield",
         "name": "Phone field annotation for 12-digit phone numbers",
-        "required": true,
         "type": "textbox"
       },
       {
         "key": "countrycode",
         "name": "Country code for phone fields (leave blank for general phone number checks)",
-        "required": true,
         "type": "textbox"
       }
 	]
