@@ -6,7 +6,7 @@ use ExternalModules\ExternalModules;
 
 class RightToLeftExternalModule extends AbstractExternalModule
 {
-	function hook_every_page_top($project_id)
+	function redcap_every_page_top($project_id)
 	{
         if (isset($project_id) && $this->getProjectSetting('eventgrid') == true) {
             $redcapSplitVersion = explode(".", REDCAP_VERSION);
@@ -69,13 +69,13 @@ class RightToLeftExternalModule extends AbstractExternalModule
         }
 	}
 
-    function hook_survey_page($project_id,$record,$instrument) {
+    function redcap_survey_page($project_id,$record,$instrument) {
         if (isset($project_id) && $this->getProjectSetting('surveyform') == true) {
             $this->drawInputForm($project_id, $record, $instrument);
         }
     }
 
-    function hook_data_entry_form($project_id,$record,$instrument) {
+    function redcap_data_entry_form($project_id,$record,$instrument) {
         if (isset($project_id) && $this->getProjectSetting('dataform') == true) {
             $this->drawInputForm($project_id, $record, $instrument);
         }
