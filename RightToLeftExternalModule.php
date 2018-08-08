@@ -30,7 +30,7 @@ class RightToLeftExternalModule extends AbstractExternalModule
             echo "<script type='text/javascript'>\n";
             echo "$(document).ready(function() {
                 $('#event_grid_table thead tr').each(function() {
-                    var thLength = $(this).children('th').size();
+                    var thLength = $(this).children('th').length;
                     while (thLength > 0) {
                         $(this).find('th:nth-child('+thLength+')').appendTo(this);
                         thLength--;
@@ -38,21 +38,21 @@ class RightToLeftExternalModule extends AbstractExternalModule
                 });
                 
                 $('#event_grid_table tbody tr').each(function() {
-                    var tdLength = $(this).children('td').size();
+                    var tdLength = $(this).children('td').length
                     while (tdLength > 0) {
                         $(this).find('td:nth-child('+tdLength+')').appendTo(this);
                         tdLength--;
                     }
                 });
                 $('#record_status_table thead tr').each(function() {
-                    var th1Length = $(this).children('th').size();
+                    var th1Length = $(this).children('th').length;
                     while (th1Length > 0) {
                         $(this).find('th:nth-child('+th1Length+')').appendTo(this);
                         th1Length--;
                     }
                 });
                 $('#record_status_table tbody tr').each(function() {
-                    var td1Length = $(this).children('td').size();
+                    var td1Length = $(this).children('td').length;
                     while (td1Length > 0) {
                         $(this).find('td:nth-child('+td1Length+')').appendTo(this);
                         td1Length--;
