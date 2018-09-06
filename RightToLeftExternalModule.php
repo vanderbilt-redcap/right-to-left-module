@@ -85,18 +85,18 @@ class RightToLeftExternalModule extends AbstractExternalModule
         ## This file is meant to be included as a REDCap hook from the hooks/data_entry_form.php or hooks/survey_form.php page
         define('PHONE_FIELD', $this->getProjectSetting('phonefield'));
 
-        include_once(dirname(dirname(dirname(__FILE__))) . "/plugins/Core/bootstrap.php");
+        //include_once(dirname(dirname(dirname(__FILE__))) . "/plugins/Core/bootstrap.php");
         $projectId = $project_id;
         $recordId = $record;
 
-        global $Core;
+        //global $Core;
 
-        $Core->Libraries(array("Project", "Metadata", "Record"));
+        //$Core->Libraries(array("Project", "Metadata", "Record"));
 
-        $project = new \Plugin\Project($projectId);
+        $project = new \Project($projectId);
         //$record = new \Plugin\Record($project,[[$project->getFirstFieldName()]],[$project->getFirstFieldName() => $recordId]);
 
-        $metadataList = $project->getMetadata();
+        $metadataList = $project->metadata;
 
         $redcapSplitVersion = explode(".",REDCAP_VERSION);
 
@@ -149,12 +149,12 @@ class RightToLeftExternalModule extends AbstractExternalModule
         echo "\$(document).ready(function() {\n";
         foreach($metadataList as $metadata) {
             # Do not want to consider any fields not actually on the form currently being viewed
-            if ($metadata->getFormName() != $instrument) {
+            if ($metadata['form_name'] != $instrument) {
                 continue;
             }
-            $fieldName = $metadata->getFieldName();
-            $annotation = $metadata->getMisc();
-            $label = preg_replace("/\s+/","",strip_tags($metadata->getElementLabel()));
+            $fieldName = $metadata['field_name'];
+            $annotation = $metadata['misc'];
+            $label = preg_replace("/\s+/","",strip_tags($metadata['element_label']));
             $numberMatches = array();
             preg_match("/(^[0-9\.]+)/",$label,$numberMatches);
             //$splitReg = preg_split("/(^[0-9\.]+)/",$label);
@@ -166,17 +166,17 @@ class RightToLeftExternalModule extends AbstractExternalModule
                 }
             }
             # Make all data fields read right-to-left
-            if ($this->getProjectSetting('textfields') && $metadata->getElementPrecedingHeader() != "") {
+            if ($this->getProjectSetting('textfields') && $metadata['element_preceding_header'] != "") {
                 echo "$('#$fieldName-sh-tr td').css('direction','rtl');";
                 echo "$('#$fieldName-sh-tr td').css('text-align','right');";
             }
             # Flip all data elements on the page to conform to a right-to-left format
             if ($this->getProjectSetting('formlayout')) {
-                if ($metadata->getElementType() == "calc" || $metadata->getElementType() == "radio" || $metadata->getElementType() == "checkbox" || $metadata->getElementType() == "yesno" || $metadata->getElementType() == "truefalse") {
+                if ($metadata['element_type'] == "calc" || $metadata['element_type'] == "radio" || $metadata['element_type'] == "checkbox" || $metadata['element_type'] == "yesno" || $metadata['element_type'] == "truefalse") {
                     echo "$('#$fieldName-tr td.data input').each(function() {
                         $(this).appendTo($(this).parent());
                     });";
-                } elseif ($metadata->getElementType() == "slider") {
+                } elseif ($metadata['element_type'] == "slider") {
                     echo "$('#$fieldName-tr td.sldrnumtd').each(function() {
                         $(this).appendTo($(this).parent());
                     });";
