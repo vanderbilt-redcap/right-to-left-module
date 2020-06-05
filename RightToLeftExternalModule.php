@@ -16,8 +16,14 @@ class RightToLeftExternalModule extends AbstractExternalModule
             } else {
                 define("LABEL_CSS", "label");
             }
+            define("LABEL_MATRIX", "labelmatrix");
+            define("MATRIX_CLASS", "mtxfld");
+            define("QUESTIONNUM_CLASS", "questionnum");
             echo "<style type='text/css'>";
             echo ".".LABEL_CSS." {
+                text-align: right;
+            }";
+            echo ".".LABEL_MATRIX." {
                 text-align: right;
             }";
             echo "</style>";
@@ -107,6 +113,8 @@ class RightToLeftExternalModule extends AbstractExternalModule
         else {
             define("LABEL_CSS","label");
         }
+        define("LABEL_MATRIX", "labelmatrix");
+        define("CHOICE_MATRIX", "choicematrix");
 
         echo "<script type='text/javascript'>\n";
         if (defined('PHONE_FIELD') && PHONE_FIELD != "") {
@@ -169,17 +177,41 @@ class RightToLeftExternalModule extends AbstractExternalModule
             if ($this->getProjectSetting('textfields') && $metadata['element_preceding_header'] != "") {
                 echo "$('#$fieldName-sh-tr td').css('direction','rtl');";
                 echo "$('#$fieldName-sh-tr td').css('text-align','right');";
+                if ($metadata['grid_name'] != "") {
+                    echo "$('#".$metadata['grid_name']."-mtxhdr-tr').css('direction','rtl');
+                    $('#".$metadata['grid_name']."-mtxhdr-tr').find('td.questionnum').each(function() {
+                        $(this).appendTo($(this).parent());
+                    });";
+                }
             }
             # Flip all data elements on the page to conform to a right-to-left format
             if ($this->getProjectSetting('formlayout')) {
-                if ($metadata['element_type'] == "calc" || $metadata['element_type'] == "radio" || $metadata['element_type'] == "checkbox" || $metadata['element_type'] == "yesno" || $metadata['element_type'] == "truefalse") {
-                    echo "$('#$fieldName-tr td.data input').each(function() {
-                        $(this).appendTo($(this).parent());
-                    });";
-                } elseif ($metadata['element_type'] == "slider") {
+                if ($metadata['element_type'] == "slider") {
                     echo "$('#$fieldName-tr td.sldrnumtd').each(function() {
                         $(this).appendTo($(this).parent());
                     });";
+                } elseif ($metadata['grid_name'] != "") {
+                    echo "$('#$fieldName-tr').css('direction','rtl');
+                        $('#$fieldName-tr').find('td.questionnummatrix').each(function() {
+                            $(this).appendTo($(this).parent());
+                        });";
+                } elseif ($metadata['element_type'] == 'descriptive') {
+                    echo "$('#$fieldName-tr').css('direction','rtl');
+                        $('#$fieldName-tr').find('td.questionnum').each(function() {
+                            $(this).appendTo($(this).parent());
+                        });";
+                }
+                else {
+                    echo "$('#$fieldName-tr td').each(function() {
+                        if (!$(this).hasClass('questionnum')) {
+                            $(this).parent().prepend($(this));
+                        }
+                    });";
+                    if ($metadata['element_type'] == "radio" || $metadata['element_type'] == "checkbox") {
+                        echo "$('#$fieldName-tr').find('input').each(function() {
+                            $(this).appendTo($(this).parent());
+                        });";
+                    }
                 }
             }
             //echo "\$('#$fieldName-tr td').css('text-align','right');";
@@ -200,10 +232,14 @@ class RightToLeftExternalModule extends AbstractExternalModule
                 });";
         }
         # For each 'tr' element on the page, rearrange the interior page elements to match a right-to-left formatting.
+        /*if ($this->getProjectSetting('formlayout')) {
+            echo "$(this).find('td." . LABEL_CSS . ", td.".LABEL_MATRIX."').appendTo(this);";
+        }*/
+        echo "});";
         if ($this->getProjectSetting('formlayout')) {
-            echo "$(this).find('td." . LABEL_CSS . "').appendTo(this);";
+            //echo "$('td.".LABEL_MATRIX." table tr td').each(function() { $(this).appendTo($(this).parent()); });";
+            echo "$('tr.".MATRIX_CLASS." div.resetLinkParent').css('text-align','left');";
         }
-        echo "});
-        </script>";
+        echo "</script>";
     }
 }
