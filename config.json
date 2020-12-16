@@ -29,16 +29,6 @@
 		"type": "checkbox"
       },
       {
-        "key": "dataform",
-        "name": "Apply right-to-left formatting to the Data Entry Form",
-        "type": "checkbox"
-      },
-      {
-        "key": "surveyform",
-        "name": "Apply right-to-left formatting to the Surveys",
-        "type": "checkbox"
-      },
-      {
         "key": "textfields",
         "name": "Apply right-to-left formatting to text fields",
         "type": "checkbox"
