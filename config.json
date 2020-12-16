@@ -17,8 +17,9 @@
 		"hook_every_page_top",
         "hook_data_entry_form",
         "hook_survey_page",
-		"page_layout"
-	],
+		"page_layout",
+        "redcap_module_system_change_version"
+    ],
 	"global-settings": [],
 
 	"project-settings": [
@@ -56,6 +57,29 @@
         "key": "countrycode",
         "name": "Country code for phone fields (leave blank for general phone number checks)",
         "type": "textbox"
+      },
+      {
+        "key": "form_settings",
+        "name": "Settings Per Form",
+        "repeatable": true,
+        "type": "sub_settings",
+        "sub_settings": [
+          {
+            "key": "form_to_rtl",
+            "name": "Form That Needs to be Right to Left",
+            "type": "form-list"
+          },
+          {
+            "key": "survey_or_form_view",
+            "name": "When to Display Form as Right to Left",
+            "type": "dropdown",
+            "choices": [
+              {"value":"form", "name":"Data Form"},
+              {"value":"survey", "name":"Survey"},
+              {"value": "both", "name": "Both"}
+            ]
+          }
+        ]
       }
 	]
 }

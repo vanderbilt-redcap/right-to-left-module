@@ -76,15 +76,72 @@ class RightToLeftExternalModule extends AbstractExternalModule
 	}
 
     function redcap_survey_page($project_id,$record,$instrument) {
-        if (isset($project_id) && $this->getProjectSetting('surveyform') == true) {
+        if (isset($project_id) && $this->checkFormSetting($instrument,'survey')) {
             $this->drawInputForm($project_id, $record, $instrument);
         }
     }
 
     function redcap_data_entry_form($project_id,$record,$instrument) {
-        if (isset($project_id) && $this->getProjectSetting('dataform') == true) {
+        if (isset($project_id) && $this->checkFormSetting($instrument,'form')) {
             $this->drawInputForm($project_id, $record, $instrument);
         }
+    }
+
+    function redcap_module_system_change_version($version, $old_version) {
+        if ($version == 'v1.4') {
+            $settingByProject = array();
+            $query = $this->query("SELECT * FROM redcap_external_module_settings WHERE external_module_id=?",[ExternalModules::getIdForPrefix($this->PREFIX)]);
+            while ($row = db_fetch_assoc($query)) {
+                if (is_numeric($row['project_id']) && ($row['key'] == "surveyform" || $row['key'] == "dataform")) {
+                    if ($row['key'] == "surveyform" && $row['value'] == "true") {
+                        if ($settingByProject[$row['project_id']] == "form") {
+                            $settingByProject[$row['project_id']] = "both";
+                        }
+                        elseif ($settingByProject[$row['project_id']] != "both") {
+                            $settingByProject[$row['project_id']] = "survey";
+                        }
+                    }
+                    elseif ($row['key'] == "dataform" && $row['value'] == "true") {
+                        if ($settingByProject[$row['project_id']] == "survey") {
+                            $settingByProject[$row['project_id']] = "both";
+                        }
+                        elseif ($settingByProject[$row['project_id']] != "both") {
+                            $settingByProject[$row['project_id']] = "form";
+                        }
+                    }
+                }
+            }
+            foreach ($settingByProject as $projectID => $value) {
+                $formSettings = array();
+                $formstoRTL = array();
+                $surveyOrForm = array();
+                $moduleProject = new \Project($projectID);
+                $formList = $moduleProject->forms;
+                foreach ($formList as $formName => $formDetails) {
+                    $formSettings[] = "true";
+                    $formstoRTL[] = $formName;
+                    $surveyOrForm[] = $value;
+                }
+                if (!empty($formSettings)) {
+                    $this->setProjectSetting('form_settings',$formSettings,$projectID);
+                    $this->setProjectSetting('form_to_rtl',$formstoRTL,$projectID);
+                    $this->setProjectSetting('survey_or_form_view',$surveyOrForm,$projectID);
+                }
+            }
+        }
+    }
+
+    private function checkFormSetting($instrument,$view) {
+	    $forms = $this->getProjectSetting('form_to_rtl');
+	    $views = $this->getProjectSetting('survey_or_form_view');
+	    $formKey = array_search($instrument,$forms);
+	    if (is_numeric($formKey)) {
+            $instrumentView = $views[$formKey];
+            if ($instrumentView == $view || $instrumentView == "both") {
+                return true;
+            }
+        }
+	    return false;
     }
 
     private function drawInputForm($project_id,$record,$instrument) {
@@ -187,9 +244,14 @@ class RightToLeftExternalModule extends AbstractExternalModule
             # Flip all data elements on the page to conform to a right-to-left format
             if ($this->getProjectSetting('formlayout')) {
                 if ($metadata['element_type'] == "slider") {
-                    echo "$('#$fieldName-tr td.sldrnumtd').each(function() {
-                        $(this).appendTo($(this).parent());
-                    });";
+                    echo "$('#$fieldName-tr td').each(function() {
+                            if (!$(this).hasClass('questionnum')) {
+                                $(this).parent().prepend($(this));
+                            }
+                        });
+                        $('#$fieldName-tr td.sldrnumtd').each(function() {
+                            $(this).appendTo($(this).parent());
+                        });";
                 } elseif ($metadata['grid_name'] != "") {
                     echo "$('#$fieldName-tr').css('direction','rtl');
                         $('#$fieldName-tr').find('td.questionnummatrix').each(function() {
@@ -207,7 +269,7 @@ class RightToLeftExternalModule extends AbstractExternalModule
                             $(this).parent().prepend($(this));
                         }
                     });";
-                    if ($metadata['element_type'] == "radio" || $metadata['element_type'] == "checkbox") {
+                    if ($metadata['element_type'] == "radio" || $metadata['element_type'] == "checkbox" || $metadata['element_type'] == "yesno") {
                         echo "$('#$fieldName-tr').find('input').each(function() {
                             $(this).appendTo($(this).parent());
                         });";
