@@ -270,7 +270,8 @@ class RightToLeftExternalModule extends AbstractExternalModule
                         }
                     });";
                     if ($metadata['element_type'] == "radio" || $metadata['element_type'] == "checkbox" || $metadata['element_type'] == "yesno") {
-                        echo "$('#$fieldName-tr').find('input').each(function() {
+                        echo "
+                        $('#$fieldName-tr').find('input').each(function() {
                             $(this).appendTo($(this).parent());
                         });";
                     }
@@ -284,7 +285,7 @@ class RightToLeftExternalModule extends AbstractExternalModule
         echo "$('tr').each(function() {";
         # For each 'tr' element on the page, make the interior elements right-to-left.
         if ($this->getProjectSetting('textfields')) {
-            echo "$(this).find('td." . LABEL_CSS . "').css('direction','rtl');
+            echo "$(this).find('td." . LABEL_CSS . ".col-7').css('direction','rtl');
                 $(this).css('text-align','right');
                 $(this).find('input').each(function() {
                     $(this).css({'direction' : 'rtl', 'margin-left' : '3px'});
